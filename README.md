@@ -15,5 +15,6 @@ Features:
                 This process ensures that older backups are automatically removed, limiting the storage to just the last three backups.
 
 To run the script, execute the following command: 
+
         ./backup.sh <source-path> <backup-path>
 
