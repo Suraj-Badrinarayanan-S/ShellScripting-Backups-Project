@@ -1,47 +1,19 @@
-#!/bin/bash
+This Bash script automates the process of backing up a specified directory and maintains a rotation of the last three backups to prevent excessive disk usage. 
 
-<< readme
-This is a script for backup with a 3 day rotation
+Features:
 
-Usage:
+        Backup Creation:
 
-./backup.sh <source-path> <backup-path>
-readme
-
-function display_usage {
-        echo "Usage: ./backup.sh <source-path> <backup-path>"
-}
-
-if [ $# -eq 0 ]; then
-        display_usage
-fi
-
-source_dir=$1
-backup_dir=$2
-timestamp=$(date '+%Y-%m-%d-%H-%M-%S')
-function create_backup {
-        zip -r "${backup_dir}/backup_${timestamp}.zip" "${source_dir}" > /dev/null
-
-        if [ $? -eq 0 ]; then
-                echo "backup generated successfully for ${timestamp}"
-        fi
-}
+                The script takes two arguments: a source directory to back up and a destination directory where the backup will be stored.
+                A ZIP file is generated, containing the contents of the source directory. This file is named using the current date and time, ensuring unique names for each backup.
+                If the backup is created successfully, a confirmation message is displayed.
 
 
-function perform_rotation {
-        backups=($(ls -t "${backup_dir}/backup_"*.zip ))
+        Backup Rotation:
 
-        if [ "${#backups[@]}" -gt 3 ]; then
-                echo "Performing rotation for 3 days"
+                The script checks the destination directory for existing backup files. If more than three backups are found, the oldest ones are deleted, keeping only the most recent three backups.
+                This process ensures that older backups are automatically removed, limiting the storage to just the last three backups.
 
-                backups_to_remove=("${backups[@]:3}")
+To run the script, execute the following command: 
+        ./backup.sh <source-path> <backup-path>
 
-                for backup in "${backups_to_remove[@]}";
-                do
-                        rm -f ${backup}
-                done
-        fi
-}
-
-create_backup
-perform_rotation
